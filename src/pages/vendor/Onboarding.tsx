@@ -77,6 +77,14 @@ export default function Onboarding() {
     );
   }
 
+  const progress = [
+    { label: 'GST verified', ok: !!data.gst, detail: data.gst ? data.gst.gstin : 'Module 01' },
+    { label: 'PAN verified', ok: !!data.pan, detail: data.pan ? data.pan.pan : 'Module 01, after GST' },
+    { label: 'Certificates uploaded', ok: data.docs.filter((d) => d.kind === 'CERT').length > 0, detail: `${data.docs.filter((d) => d.kind === 'CERT').length} uploaded` },
+    { label: 'Plan & agreement', ok: data.module2Done, detail: data.plan ? `${data.plan} plan (TBD)` : 'Module 02' },
+    { label: 'Bank verified', ok: !!data.bank?.verified, detail: data.bank ? `${data.bank.bankName} ••${data.bank.account.slice(-4)}` : 'Module 03' },
+    { label: 'Submitted for review', ok: !!data.submittedAt, detail: data.submittedAt ? fmtDate(data.submittedAt) : 'Module 03' },
+  ];
   const modDone = { 1: data.module1Done, 2: data.module2Done, 3: !!data.submittedAt };
   const unlocked = { 1: true, 2: data.module1Done, 3: data.module2Done };
   const MODS: { id: Mod; label: string }[] = [
@@ -106,9 +114,26 @@ export default function Onboarding() {
         </div>
       </div>
 
-      {mod === 1 && <Module1 onNext={() => setMod(2)} />}
-      {mod === 2 && <Module2 onBack={() => setMod(1)} onNext={() => setMod(3)} />}
-      {mod === 3 && <Module3 onBack={() => setMod(2)} />}
+      <div className="detail-layout">
+        <div className="stack-16">
+          {mod === 1 && <Module1 onNext={() => setMod(2)} />}
+          {mod === 2 && <Module2 onBack={() => setMod(1)} onNext={() => setMod(3)} />}
+          {mod === 3 && <Module3 onBack={() => setMod(2)} />}
+        </div>
+        <aside className="stack-16 detail-aside">
+          <section className="kcard" aria-labelledby="prog-title">
+            <div className="kcard-head"><h2 id="prog-title">Your progress</h2><span className="count-pill">{progress.filter((x) => x.ok).length} / {progress.length}</span></div>
+            <div className="segbar" style={{ marginBottom: 12 }}>{progress.map((x) => <span key={x.label} className={x.ok ? 'on' : ''} />)}</div>
+            {progress.map((x) => (
+              <div key={x.label} className="arow">
+                <span className={`arow-icon ${x.ok ? 'tone-green' : 'tone-slate'}`}>{x.ok ? <CheckCircle2 size={16} /> : <Lock size={15} />}</span>
+                <div className="grow" style={{ minWidth: 0 }}><div className="arow-title" style={{ fontSize: 14 }}>{x.label}</div><div className="arow-sub">{x.detail}</div></div>
+              </div>
+            ))}
+          </section>
+          <Banner tone="info" lead="What happens next:">the Approver reviews each document, then Admin activates your account. Locked menu items open after activation.</Banner>
+        </aside>
+      </div>
 
       {demo}
     </div>

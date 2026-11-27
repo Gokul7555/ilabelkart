@@ -7,6 +7,8 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useToast } from '../lib/toast';
 import { statusStyle } from '../lib/status-maps';
+import { useAuth } from '../lib/auth';
+import { PORTAL_LABEL } from '../config/nav';
 import type { PillTone } from '../lib/status-maps';
 
 /* ---------------- Layout primitives ---------------- */
@@ -15,13 +17,28 @@ import type { PillTone } from '../lib/status-maps';
  * Page header: mono eyebrow with status dot, large bold title, muted one-line subtitle, right-aligned actions.
  * `icon` is accepted for compatibility but the new structure does not render it.
  */
+/** Default eyebrow: portal · organisation (e.g. "VENDOR PORTAL · NovaTex Manufacturing"). */
+function useDefaultEyebrow(): ReactNode {
+  const { user } = useAuth();
+  if (!user) return null;
+  const portal = user.role === 'customer' ? 'BUYER ACCOUNT'
+    : user.staffRole && user.staffRole !== 'Super Admin' ? `${user.staffRole.toUpperCase()} DESK` : PORTAL_LABEL[user.role].label;
+  return <>{portal} · {user.org}</>;
+}
+
+/**
+ * Page header: mono eyebrow with status dot, large bold title, muted one-line subtitle, right-aligned actions.
+ * `icon` is accepted for compatibility but the new structure does not render it.
+ */
 export function PageHeader({ title, subtitle, actions, eyebrow }: {
   icon?: LucideIcon; title: ReactNode; subtitle?: ReactNode; actions?: ReactNode; eyebrow?: ReactNode;
 }) {
+  const fallback = useDefaultEyebrow();
+  const eb = eyebrow ?? fallback;
   return (
     <header className="ph">
       <div className="grow">
-        {eyebrow && <div className="ph-eyebrow"><span className="dot" aria-hidden />{eyebrow}</div>}
+        {eb && <div className="ph-eyebrow"><span className="dot" aria-hidden />{eb}</div>}
         <h1 className="ph-title">{title}</h1>
         {subtitle && <p className="ph-sub">{subtitle}</p>}
       </div>
@@ -55,17 +72,16 @@ export function Card({ title, sub, icon: Icon, actions, children, footer, classN
 
 export type Tone = 'indigo' | 'green' | 'amber' | 'red' | 'blue' | 'slate' | 'violet';
 
+/** Stat card: uppercase label + icon top-right, big number, muted caption. Red/amber tones mark "needs attention". */
 export function Kpi({ icon: Icon, label, value, help, tone = 'indigo', mono }: {
   icon: LucideIcon; label: string; value: ReactNode; help?: ReactNode; tone?: Tone; mono?: boolean;
 }) {
+  const attn = tone === 'red' ? 'tone-red-attn' : tone === 'amber' ? 'tone-amber-attn' : '';
   return (
-    <div className="card kpi">
-      <div className={`tile tone-${tone}`}><Icon size={19} /></div>
-      <div className="grow">
-        <div className="label">{label}</div>
-        <div className={`value ${mono ? 'mono' : ''}`}>{value}</div>
-        {help && <div className="help">{help}</div>}
-      </div>
+    <div className={`stat ${attn}`}>
+      <div className="stat-top"><span className="stat-label">{label}</span><Icon size={18} className={`stat-icon ${attn ? '' : 'tone'}`} aria-hidden /></div>
+      <div className={`stat-value sm ${mono ? 'mono' : ''}`}>{value}</div>
+      {help && <div className="stat-cap">{help}</div>}
     </div>
   );
 }

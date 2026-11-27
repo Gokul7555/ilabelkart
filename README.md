@@ -6,7 +6,7 @@ The brand name is a single variable in `src/config/brand.ts`.
 
 ## Design
 
-Corporate B2B look: teal-700 primary, slate-800 header and footer, emerald accents, and amber, sky, emerald and red for the pending, processing, delivered and cancelled statuses.
+Corporate B2B look: brand green `#35a64d` / `rgb(53, 166, 77)` primary with white text on green buttons, slate-800 header and footer, emerald accents, and amber, sky, emerald and red for the pending, processing, delivered and cancelled statuses.
 - **Theme:** every colour is a CSS variable in `src/index.css`. Dark mode (the sun/moon button in the header) uses the same token names with re-stepped values.
 - **Type and shape:** Inter for body text (15px), IBM Plex Sans for headings, tabular numbers for prices. 6px corners, 1px slate-200 borders, and shadows only on hover.
 - **Header:** utility bar (phone, email, Request a Quote, GST-registered badge, region), then the main bar (logo, wide search, account, cart), then a category bar with a mega menu.
@@ -18,6 +18,10 @@ Corporate B2B look: teal-700 primary, slate-800 header and footer, emerald accen
 - **Components:** sortable tables, tiered price tables, a checkout stepper, breadcrumbs on inner pages, and a sticky Request a Quote button on mobile.
 - **Accessibility:** focus rings, skip link and semantic landmarks. All text/background token pairs were checked for WCAG AA (4.5:1) in both themes.
 - **Previous look:** the navy/indigo version is saved in `~/reactdevelopment/I_kart_backups/src-navy-indigo`.
+
+## Workflow guide
+
+The full workflow of every role, in simple English, is in [`docs/WORKFLOW.md`](docs/WORKFLOW.md).
 
 ## Run
 

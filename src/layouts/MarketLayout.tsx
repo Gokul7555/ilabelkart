@@ -1,4 +1,6 @@
+import { useRef } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useTableLabels } from '../components/TableLabels';
 import { FileText } from 'lucide-react';
 import { StoreHeader } from './TopBar';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -12,12 +14,14 @@ export function MarketLayout() {
   const { user } = useAuth();
   const { items } = useCart();
   const loc = useLocation();
+  const mainRef = useRef<HTMLElement>(null);
+  useTableLabels(mainRef);
   const fab = !['/quote', '/checkout', '/cart'].includes(loc.pathname);
   return (
     <>
       <a href="#main" className="skip-link">Skip to content</a>
       <StoreHeader cartCount={!user || user.role === 'customer' ? items.length : undefined} />
-      <main id="main" className={`mk-main ${fab ? 'has-fab' : ''}`}>
+      <main id="main" ref={mainRef} className={`mk-main ${fab ? 'has-fab' : ''}`}>
         <Breadcrumbs />
         <ErrorBoundary resetKey={loc.pathname}><Outlet /></ErrorBoundary>
       </main>

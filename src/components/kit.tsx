@@ -104,8 +104,9 @@ export function FilterChips<T extends string>({ chips, value, onChange, label = 
 /* ---------------- Action row ---------------- */
 
 /** Rounded muted row: tinted icon tile, bold title + mono ref, muted subtitle, pill CTA. */
-export function ActionRow({ icon: Icon, tone, title, refId, subtitle, cta, to, critical }: {
-  icon: LucideIcon; tone: 'red' | 'amber' | 'blue' | 'green' | 'indigo' | 'violet'; title: string; refId?: string; subtitle?: ReactNode; cta: string; to: string; critical?: boolean;
+export function ActionRow({ icon: Icon, tone, title, refId, subtitle, cta, to, onClick, done, critical }: {
+  icon: LucideIcon; tone: 'red' | 'amber' | 'blue' | 'green' | 'indigo' | 'violet'; title: string; refId?: string; subtitle?: ReactNode; cta: string;
+  to?: string; onClick?: () => void; done?: ReactNode; critical?: boolean;
 }) {
   return (
     <div className={`arow ${critical ? 'critical' : ''}`}>
@@ -114,7 +115,9 @@ export function ActionRow({ icon: Icon, tone, title, refId, subtitle, cta, to, c
         <div className="arow-title">{title} {refId && <MonoId>{refId}</MonoId>}</div>
         {subtitle && <div className="arow-sub">{subtitle}</div>}
       </div>
-      <Link to={to} className={`btn btn-sm ${critical ? 'btn-danger' : 'btn-secondary'}`}>{cta}</Link>
+      {done ?? (onClick
+        ? <button type="button" onClick={onClick} className={`btn btn-sm ${critical ? 'btn-danger' : 'btn-secondary'}`}>{cta}</button>
+        : <Link to={to ?? '#'} className={`btn btn-sm ${critical ? 'btn-danger' : 'btn-secondary'}`}>{cta}</Link>)}
     </div>
   );
 }

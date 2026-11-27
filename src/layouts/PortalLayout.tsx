@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTableLabels } from '../components/TableLabels';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Lock, MoreHorizontal } from 'lucide-react';
 import { AppBar, NavMenu, NavPills } from '../components/AppBar';
@@ -46,6 +47,8 @@ export function PortalLayout() {
   const { can } = useStaff();
   const loc = useLocation();
   const [drawer, setDrawer] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  useTableLabels(mainRef);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   useEffect(() => { setDrawer(false); setOpenMenu(null); }, [loc.pathname]);
 
@@ -118,7 +121,7 @@ export function PortalLayout() {
       </aside>
       <div className={`scrim ${drawer ? 'open' : ''}`} onClick={() => setDrawer(false)} />
 
-      <main id="main" className="portal-main">
+      <main id="main" className="portal-main" ref={mainRef}>
         <Breadcrumbs />
         <ErrorBoundary resetKey={loc.pathname}><Outlet /></ErrorBoundary>
       </main>

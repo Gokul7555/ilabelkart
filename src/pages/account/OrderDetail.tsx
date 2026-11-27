@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { Camera, Download, FileText, KeyRound, Lock, MapPin, PackageCheck, RotateCcw, ShieldAlert, Truck, Zap } from 'lucide-react';
-import { Banner, Card, Pill, StatusPill } from '../../components/ui';
+import { Banner, Card, PageHeader, Pill, StatusPill } from '../../components/ui';
+import { MonoId } from '../../components/kit';
 import { ProductImage } from '../../components/ProductImage';
 import { OrderTimeline, ReturnCountdown, SubStatusPill, TrackingModal } from '../../components/OrderBits';
 import { OtpHandoverModal } from '../../components/OtpHandoverModal';
@@ -26,29 +27,30 @@ export default function OrderDetail() {
   if (!o) return <Navigate to="/account/orders" replace />;
 
   return (
-    <div className="container wide stack-16" style={{ maxWidth: 1100 }}>
-      <Card>
-        <div className="row wrap" style={{ gap: 20, alignItems: 'flex-start' }}>
-          <div className="grow">
-            <div className="caps muted">Parent order</div>
-            <div className="mono" style={{ fontSize: 20, fontWeight: 750 }}>{o.id}</div>
-            <div className="small muted">Placed {fmtDateTime(o.placedAt)} · {o.subOrders.length} vendor sub-order(s)</div>
-          </div>
-          <dl className="kv" style={{ gridTemplateColumns: '90px 1fr', minWidth: 300 }}>
-            <dt>Deliver to</dt><dd className="small"><MapPin size={11} style={{ verticalAlign: -1 }} /> {o.address.label}, {o.address.city} {o.address.pin}</dd>
-            <dt>Payment</dt><dd className="small">{METHOD[o.payment.method]} · {o.payment.status}{o.payment.txn && <span className="mono muted"> · {o.payment.txn}</span>}</dd>
-          </dl>
-          <div style={{ textAlign: 'right' }}>
-            <div className="caps muted">Total paid</div>
-            <div className="mono" style={{ fontSize: 20, fontWeight: 750 }}>{inr(o.total)}</div>
-            <div className="xs muted">incl. GST {inr(o.gst)} · shipping {inr(o.shipping)}</div>
-          </div>
+    <div>
+      <PageHeader title={<>Order <MonoId strong>{o.id}</MonoId></>} subtitle={`Placed ${fmtDateTime(o.placedAt)} · ${o.subOrders.length} vendor sub-order(s)`}
+        actions={<Link to="/account/orders" className="btn btn-secondary">All orders</Link>} />
+      <div className="detail-layout">
+        <div className="stack-16">
+          {o.subOrders.map((s) => <SubOrderCard key={s.id} s={s} onTrack={() => setTrack(s)} />)}
         </div>
-      </Card>
-      <Banner tone="info" icon={Lock} lead="Orders can't be cancelled or edited after placing.">For damaged goods, raise a claim on the delivered sub-order within the return window. For anything else, contact TrimNova Support.</Banner>
-
-      {o.subOrders.map((s) => <SubOrderCard key={s.id} s={s} onTrack={() => setTrack(s)} />)}
-
+        <aside className="stack-16 detail-aside">
+          <section className="kcard">
+            <div className="kcard-head"><h2>Summary</h2></div>
+            <div className="sum-row"><span className="muted">Items (pre-tax)</span><span className="mono">{inr(o.subtotal)}</span></div>
+            <div className="sum-row"><span className="muted">Shipping</span><span className="mono">{o.shipping ? inr(o.shipping) : 'Free'}</span></div>
+            <div className="sum-row"><span className="muted">GST</span><span className="mono">{inr(o.gst)}</span></div>
+            <div className="sum-row total"><span>Total paid</span><span className="mono">{inr(o.total)}</span></div>
+            <div className="divider-h" />
+            <dl className="kv" style={{ gridTemplateColumns: '92px 1fr' }}>
+              <dt>Payment</dt><dd className="small">{METHOD[o.payment.method]} · {o.payment.status}{o.payment.txn && <div className="mono xs muted">{o.payment.txn}</div>}</dd>
+              <dt>Deliver to</dt><dd className="small"><MapPin size={11} style={{ verticalAlign: -1 }} /> {o.address.label}<div className="xs muted">{o.address.line}, {o.address.city} {o.address.pin}</div></dd>
+              <dt>Sub-orders</dt><dd><div className="col" style={{ gap: 4 }}>{o.subOrders.map((s) => <span key={s.id} className="row wrap" style={{ gap: 6 }}><MonoId>{s.id}</MonoId><StatusPill status={s.status} /></span>)}</div></dd>
+            </dl>
+          </section>
+          <Banner tone="info" icon={Lock} lead="No cancel or edit.">Orders can't be changed after placing. For damaged goods, raise a claim on the delivered sub-order within the return window.</Banner>
+        </aside>
+      </div>
       <TrackingModal so={track} onClose={() => setTrack(null)} />
     </div>
   );

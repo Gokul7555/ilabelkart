@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  BadgeCheck, Bell, ChevronDown, FileText, Globe, LayoutGrid, LogOut, Mail, Menu, Moon, Phone, RefreshCw, Search, ShoppingCart, Sun, User, Zap,
+  BadgeCheck, Bell, ChevronDown, FileText, Globe, LayoutGrid, LogOut, Mail, Moon, Phone, RefreshCw, Search, ShoppingCart, Sun, User, Zap,
 } from 'lucide-react';
 import { Logo } from '../components/Logo';
 import { BRAND } from '../config/brand';
@@ -152,23 +152,6 @@ export function UserMenu({ chip }: { chip?: boolean }) {
         </div>
       )}
     </div>
-  );
-}
-
-/** Portal header: menu toggle, logo, region, theme, notifications, user. */
-export function TopBar({ onMenu }: { onMenu?: () => void }) {
-  const { user } = useAuth();
-  return (
-    <header className="topbar">
-      {onMenu && <button className="icon-btn menu-toggle" onClick={onMenu} aria-label="Open menu"><Menu size={18} /></button>}
-      <Link to={user ? homeFor(user) : '/marketplace'} style={{ textDecoration: 'none' }} aria-label={`${BRAND.name} home`}><Logo /></Link>
-      <span className="divider" />
-      <RegionChip />
-      <div className="spacer" />
-      <ThemeToggle />
-      {user && <Bellmenu />}
-      <UserMenu />
-    </header>
   );
 }
 

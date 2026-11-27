@@ -12,7 +12,7 @@ import { useToast } from '../lib/toast';
 import { useAudit } from '../lib/audit';
 
 const COLORS = [
-  ['Primary · teal-700', 'var(--primary)'], ['Hover · teal-800', 'var(--primary-600)'], ['Tint · teal-50', 'var(--primary-50)'], ['Secondary · slate-800', 'var(--heading)'],
+  ['Primary · #35a64d', 'var(--primary)'], ['Hover', 'var(--primary-600)'], ['Tint', 'var(--primary-50)'], ['Secondary · slate-800', 'var(--heading)'],
   ['Accent · emerald-500', 'var(--accent)'], ['Pending · amber', 'var(--warning)'], ['Processing · sky', 'var(--info)'], ['Cancelled · red', 'var(--danger)'],
 ];
 
